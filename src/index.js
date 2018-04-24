@@ -4,15 +4,13 @@ import Helmet from 'react-helmet';
 import io from 'socket.io-client';
 
 class Home extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      messages: [],
-      inputMessage: '',
-      status: 'no connection'
-    };
-    this.socket;
+  state = {
+    messages: [],
+    inputMessage: '',
+    status: 'no connection'
   }
+
+  socket = null;
 
   componentDidMount() {
     this.socket = io('http://localhost:3000');
