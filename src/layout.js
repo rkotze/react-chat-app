@@ -7,7 +7,6 @@ function Layout({ route }) {
     <Helmet
       titleTemplate={`%s | Ultimate universal app`}
       defaultTitle="Universal" />
-    <h1>Universal app</h1>
     {renderRoutes(route.routes)}
   </div>
   )
