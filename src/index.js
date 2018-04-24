@@ -21,7 +21,6 @@ class Home extends React.Component {
       this.setState((prevState) => ({
         messages: [...prevState.messages, msg]
       }));
-      window.scrollTo(0, document.body.scrollHeight);
     });
   }
 
@@ -40,23 +39,32 @@ class Home extends React.Component {
   render() {
     const { inputMessage, messages, status } = this.state;
     return (
-      <div>
+      <div className="home">
         <Helmet
           title="Chat"
           meta={[
             { name: 'description', content: 'chat' }
           ]} />
-        <h1>Chat</h1>
-        <p>Status: {status}</p>
-        {messages.map((message) => <p>{message}</p>)}
-        <form onSubmit={this.handleSubmit}>
-          <input onChange={this.handleInputMessage} value={inputMessage} />
-          <input type="submit" value="send" />
-        </form>
+        <ChatBox>
+          <Groups groupList={[{ name: "Default Group" }]} />
+          <div className="message-box">
+            <div className="message-list">
+              <p>Status: {status}</p>
+              {messages.map((message) => <p>{message}</p>)}
+            </div>
+            <form className="message-form" onSubmit={this.handleSubmit}>
+              <input className="message-input" onChange={this.handleInputMessage} value={inputMessage} />
+              <input type="submit" value="Send" />
+            </form>
 
+          </div>
+        </ChatBox>
       </div>
     );
   }
 }
+
+const ChatBox = ({ children }) => <div className="chat-box">{children}</div>;
+const Groups = ({ groupList }) => <div className="groups">{groupList.map((group) => <div key={group.name}>{group.name}</div>)}</div>;
 
 export default Home;

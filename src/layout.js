@@ -3,7 +3,7 @@ import { renderRoutes } from 'react-router-config';
 import Helmet from 'react-helmet'
 
 function Layout({ route }) {
-  return (<div>
+  return (<div className="layout">
     <Helmet
       titleTemplate={`%s | Ultimate universal app`}
       defaultTitle="Universal" />
