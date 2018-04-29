@@ -17,7 +17,6 @@ class Home extends React.Component {
     this.socket = manageSocket();
     this.socket.connect(() => {
       this.setState({ status: "Connected: " + this.socket.id });
-      this.socket.addUser(prompt("What's your name?"));
     });
 
     this.socket.updateChat((username, msg) => {
@@ -87,6 +86,52 @@ class Home extends React.Component {
   }
 }
 
+class AddUser extends React.Component {
+  state = { username: null };
+
+  socket = null;
+
+  componentDidMount() {
+    this.socket = manageSocket();
+  }
+
+  handleNameChange = e => {
+    this.setState({
+      username: e.target.value,
+      showUsername: false
+    });
+  };
+
+  handleSubmit = e => {
+    e.preventDefault();
+    this.socket.addUser(this.state.username);
+    this.setState({
+      showUsername: true
+    });
+  };
+
+  render() {
+    const { username, showUsername } = this.state;
+    if (showUsername) {
+      return <div>{username}</div>;
+    }
+
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <p>Add username to activate chat.</p>
+        <label>
+          Name:
+          <input
+            name="username"
+            value={username}
+            onChange={this.handleNameChange}
+          />
+        </label>
+      </form>
+    );
+  }
+}
+
 const ChatBox = ({ children }) => <div className="chat-box">{children}</div>;
 class Groups extends React.Component {
   socket = null;
@@ -105,6 +150,7 @@ class Groups extends React.Component {
     const { groupList } = this.props;
     return (
       <div className="groups">
+        <AddUser />
         {groupList.map(group => (
           <div key={group} onClick={this.handleRoomClick(group)}>
             {group}
