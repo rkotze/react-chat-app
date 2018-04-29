@@ -6,25 +6,9 @@ module.exports = function SocketServer(httpServer) {
   const rooms = ["room1", "room2", "room3"];
   const usernames = {};
 
-  io.on("connection", function(socket) {
-    socket.on("addUser", function(username) {
-      socket.username = username;
-      usernames[username] = username;
-      socket.room = "room1";
-      socket.join(socket.room);
-      socket.emit("updateChat", "SERVER", "you have connected to room1");
-      socket.broadcast
-        .to("room1")
-        .emit("updateChat", "SERVER", username + " has connected to this room");
-      socket.emit("updateRooms", rooms, "room1");
-    });
+  io.on("connection", function (socket) {
 
-    socket.on("sendChat", function(msg) {
-      io.sockets.in(socket.room).emit("updateChat", socket.username, msg);
-    });
-
-    socket.on("switchRoom", function(newroom) {
-      console.log(newroom);
+    function switchRoom(newroom) {
       socket.leave(socket.room);
       socket.join(newroom);
       socket.emit("updateChat", "SERVER", "you have connected to " + newroom);
@@ -40,9 +24,27 @@ module.exports = function SocketServer(httpServer) {
           socket.username + " has joined this room"
         );
       socket.emit("updateRooms", rooms, newroom);
+    }
+
+    socket.on("addUser", function (username) {
+      socket.username = username;
+      usernames[username] = username;
+      socket.room = "room1";
+      socket.join(socket.room);
+      socket.emit("updateChat", "SERVER", "you have connected to room1");
+      socket.broadcast
+        .to("room1")
+        .emit("updateChat", "SERVER", username + " has connected to this room");
+      socket.emit("updateRooms", rooms, "room1");
     });
 
-    socket.on("disconnect", function() {
+    socket.on("sendChat", function (msg) {
+      io.sockets.in(socket.room).emit("updateChat", socket.username, msg);
+    });
+
+    socket.on("switchRoom", switchRoom);
+
+    socket.on("disconnect", function () {
       delete usernames[socket.username];
       socket.broadcast.emit(
         "updateChat",
@@ -52,10 +54,9 @@ module.exports = function SocketServer(httpServer) {
       socket.leave(socket.room);
     });
 
-    socket.on("newRoom", function(newRoom) {
-      console.log(newRoom);
+    socket.on("newRoom", function (newRoom) {
       rooms.push(newRoom);
-      socket.broadcast.emit("switchRoom", newRoom);
+      switchRoom(newRoom);
     });
   });
 };
