@@ -4,8 +4,12 @@ export default function manageSocket() {
   const socket = io("http://localhost:3000");
 
   return {
+    id: null,
     connect(fn) {
-      socket.on("connect", fn);
+      socket.on("connect", () => {
+        this.id = socket.id;
+        fn();
+      });
     },
     updateChat(fn) {
       socket.on("updateChat", fn);
