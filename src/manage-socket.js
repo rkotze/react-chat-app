@@ -26,6 +26,9 @@ export default function manageSocket() {
     },
     switchRoom(room) {
       socket.emit("switchRoom", room);
+    },
+    addRoom(room) {
+      socket.emit("newRoom", room);
     }
   };
 }

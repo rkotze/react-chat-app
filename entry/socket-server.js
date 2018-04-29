@@ -24,6 +24,7 @@ module.exports = function SocketServer(httpServer) {
     });
 
     socket.on("switchRoom", function(newroom) {
+      console.log(newroom);
       socket.leave(socket.room);
       socket.join(newroom);
       socket.emit("updateChat", "SERVER", "you have connected to " + newroom);
@@ -49,6 +50,12 @@ module.exports = function SocketServer(httpServer) {
         socket.username + " has disconnected"
       );
       socket.leave(socket.room);
+    });
+
+    socket.on("newRoom", function(newRoom) {
+      console.log(newRoom);
+      rooms.push(newRoom);
+      socket.broadcast.emit("switchRoom", newRoom);
     });
   });
 };

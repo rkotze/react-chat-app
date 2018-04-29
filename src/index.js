@@ -132,6 +132,42 @@ class AddUser extends React.Component {
   }
 }
 
+class AddRoom extends React.Component {
+  state = { room: null };
+
+  socket = null;
+
+  componentDidMount() {
+    this.socket = manageSocket();
+  }
+
+  handleRoomChange = e => {
+    this.setState({
+      room: e.target.value
+    });
+  };
+
+  handleSubmit = e => {
+    e.preventDefault();
+    this.socket.addRoom(this.state.room);
+    this.setState({
+      room: ""
+    });
+  };
+
+  render() {
+    const { room } = this.state;
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <label>
+          Add room:
+          <input name="room" value={room} onChange={this.handleRoomChange} />
+        </label>
+      </form>
+    );
+  }
+}
+
 const ChatBox = ({ children }) => <div className="chat-box">{children}</div>;
 class Groups extends React.Component {
   socket = null;
@@ -151,6 +187,7 @@ class Groups extends React.Component {
     return (
       <div className="groups">
         <AddUser />
+        <AddRoom />
         {groupList.map(group => (
           <div key={group} onClick={this.handleRoomClick(group)}>
             {group}
